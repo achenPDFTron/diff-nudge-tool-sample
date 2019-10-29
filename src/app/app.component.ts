@@ -100,8 +100,12 @@ export class AppComponent implements AfterViewInit {
   loadDocument(panel, docLocation) {
     var CoreControls = instances[panel].instance.CoreControls;
   
-    CoreControls.createDocument(docLocation, { workerTransportPromise: this.getWorkerTransportPromise() })
-      .then(function(newDoc) {
+    // CoreControls.createDocument(docLocation, { workerTransportPromise: this.getWorkerTransportPromise() })
+    //   .then(function(newDoc) {
+    //     instances[panel] = Object.assign({}, instances[panel], { newDoc: newDoc });
+    //   });
+    CoreControls.createDocument(docLocation)
+      .then((newDoc) => {
         instances[panel] = Object.assign({}, instances[panel], { newDoc: newDoc });
       });
   }
@@ -114,7 +118,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   setupViewer(item) {
-    return new Promise(function(resolve) {
+    return new Promise((resolve) => {
       var viewerElement = document.getElementById(item.panel);
   
       WebViewer({
@@ -125,10 +129,10 @@ export class AppComponent implements AfterViewInit {
         // disable annotation rendering
         enableAnnotations: false,
       }, viewerElement)
-        .then(function(instance) {
+        .then((instance) => {
           var docViewer = instance.docViewer;
   
-          docViewer.on('documentLoaded', function() {
+          docViewer.on('documentLoaded', () => {
             if (!instances[item.panel].documentContainer) {
               var documentContainer = viewerElement.querySelector('iframe').contentDocument.querySelector('.DocumentContainer');
               instances[item.panel] = Object.assign({}, instances[item.panel], {
@@ -174,7 +178,7 @@ export class AppComponent implements AfterViewInit {
   initializeViewers(array, callback) {
     var pageCompleteRenderRect = {};
   
-    Promise.all(array.map(this.setupViewer)).then(function() {
+    Promise.all(array.map(this.setupViewer)).then(() => {
       var instance = instances[PANEL_IDS.MID_PANEL].instance;
   
       // eslint-disable-next-line no-undef
@@ -183,12 +187,12 @@ export class AppComponent implements AfterViewInit {
       // disable for middle panel
       instance.disableElements([PANEL_IDS.LEFT_PANEL, 'leftPanelButton', 'searchButton', 'searchPanel', 'searchOverlay']);
   
-      instance.docViewer.on('pageComplete', function(completedPageIndex) {
+      instance.docViewer.on('pageComplete', (completedPageIndex) => {
         pageCompleteRenderRect[completedPageIndex] = lastRenderRect[completedPageIndex];
         this.update(PANEL_IDS.MID_PANEL, completedPageIndex);
       });
   
-      instance.docViewer.on('beginRendering', function() {
+      instance.docViewer.on('beginRendering', () => {
         var pageIndex = instance.docViewer.getCurrentPage() - 1;
         lastRenderRect[pageIndex] = instance.docViewer.getViewportRegionRect(pageIndex);
         if (currentLoadCanvas[pageIndex]) {
@@ -197,17 +201,17 @@ export class AppComponent implements AfterViewInit {
         }
       });
   
-      instance.docViewer.on('finishedRendering', function() {
+      instance.docViewer.on('finishedRendering', () => {
         var displayMode = instance.docViewer.getDisplayModeManager().getDisplayMode();
         var visiblePages = displayMode.getVisiblePages();
   
-        visiblePages.forEach(function(pageIndex) {
+        visiblePages.forEach((pageIndex) => {
           lastRenderRect[pageIndex] = pageCompleteRenderRect[pageIndex];
           this.update(PANEL_IDS.MID_PANEL, pageIndex);
         });
       });
   
-      instance.docViewer.one('finishedRendering', function() {
+      instance.docViewer.one('finishedRendering', () => {
         // run this only once
         // in IE11, this event is called everytime a pdf is rotated or zoomed in
         // eslint-disable-next-line no-undef
@@ -241,10 +245,10 @@ export class AppComponent implements AfterViewInit {
       pageIndex: pageIndex,
       canvasNum: 1,
       pageRotation: instance.docViewer.getRotation(),
-      getZoom: function() {
+      getZoom: () => {
         return instance.docViewer.getZoom();
       },
-      drawComplete: function(pageCanvas) {
+      drawComplete: (pageCanvas) => {
         originalCanvases[pageIndex] = pageCanvas;
         this.updateMiddlePanelDiff(pageIndex);
         currentLoadCanvas[pageIndex] = null;
