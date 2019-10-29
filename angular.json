@@ -25,12 +25,24 @@
             "aot": false,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "src/assets/lib",
+                "output": "/webviewer/"
+              },
+              {
+                "glob": "**/*",
+                "input": "./src/assets/lib",
+                "output": "/webviewer/"
+              }
             ],
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "src/assets/lib/webviewer.min.js"
+            ]
           },
           "configurations": {
             "production": {
