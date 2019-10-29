@@ -59,7 +59,8 @@ function renderSVGIcons() {
     var img = document.createElement('img');
     img.draggable = false;
     // eslint-disable-next-line prefer-template
-    img.setAttribute('src', url + '/assets/' + elementIdToSVGMapping[elementId]);
+    var urlToAppend = url[url.length - 1] === '/' ?'assets/' + elementIdToSVGMapping[elementId] : '/assets/' + elementIdToSVGMapping[elementId];
+    img.setAttribute('src', url + urlToAppend);
     if (temp) {
       temp.appendChild(img);
     }

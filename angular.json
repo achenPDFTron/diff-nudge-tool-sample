@@ -41,7 +41,8 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "src/assets/lib/webviewer.min.js"
+              "src/assets/lib/webviewer.min.js",
+              "src/assets/lib/nudge-tool.js"
             ]
           },
           "configurations": {

@@ -2,21 +2,23 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 
 declare const WebViewer: any;
 
+declare const initNudgeTool: any;
+declare const setUpNudgeToolAndAppendToIFrame: any;
+declare const setInstance: any;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements AfterViewInit {
   /**
    * https://www.pdftron.com/documentation/web/get-started/angular/exist-project
    */
-  @ViewChild('viewer') viewer: ElementRef;
+  @ViewChild('middlePanel') midPanelViewer: ElementRef;
 
   wvInstance: any;
-  ngOnInit(): void {
 
-  }
   ngAfterViewInit(): void {
     /**
      * https://github.com/angular/angular-cli/wiki/stories-asset-configuration
@@ -25,23 +27,19 @@ export class AppComponent implements OnInit, AfterViewInit {
     WebViewer({
       path: '/webviewer',
       initialDoc: 'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf'
-    }, this.viewer.nativeElement).then(instance => {
+    }, this.midPanelViewer.nativeElement).then(instance => {
       this.wvInstance = instance;
+      // setUpNudgeToolAndAppendToIFrame();
+      // initNudgeTool();
 
-      // now you can access APIs through this.webviewer.getInstance()
-      instance.openElement('notesPanel');
-      // see https://www.pdftron.com/documentation/web/guides/ui/apis 
-      // for the full list of APIs
+      instance.docViewer.one('finishedRendering', function() {
+        // run this only once
+        // in IE11, this event is called everytime a pdf is rotated or zoomed in
+        // eslint-disable-next-line no-undef
+        setInstance(instance);
+        initNudgeTool();
+        setUpNudgeToolAndAppendToIFrame();
 
-      // or listen to events from the viewer element
-      this.viewer.nativeElement.addEventListener('pageChanged', (e) => {
-        const [ pageNumber ] = e.detail;
-        console.log(`Current page is ${pageNumber}`);
-      });
-
-      // or from the docViewer instance
-      instance.docViewer.on('annotationsLoaded', () => {
-        console.log('annotations loaded');
       });
     });
   }

@@ -1,1 +1,24 @@
-<div #viewer class="viewer"></div>
+<div id="viewers">
+  <div id="leftPanel" #leftPanel class="viewer"></div>
+  <div id="middlePanel" #middlePanel class="viewer"></div>
+  <div id="rightPanel" #rightPanel class="viewer"></div>
+</div>
+
+<div id="nudge-diff-tool">
+  <div class="action-group">
+    <div id="rotateCounterClockwise" class="action"></div>
+    <div id="rotateClockwise" class="action"></div>
+  </div>
+  <div>
+    <div id="translateUp" class="action"></div>
+    <div class="action-group">
+      <div id="translateLeft" class="action"></div>
+      <div id="translateRight" class="action"></div>
+    </div>
+    <div id="translateDown" class="action"></div>
+  </div>
+  <div class="action-group">
+    <div id="scaleOut" class="action"></div>
+    <div id="scaleIn" class="action"></div>
+  </div>
+</div>
