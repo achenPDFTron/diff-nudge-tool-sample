@@ -12,6 +12,9 @@ declare const setInstance: any;
 declare const getPageTransformationState: any;
 declare const resetPageTransformationStates: any;
 
+declare const onStateChange;
+declare const onNudgeToolStateChange;
+
 const PANEL_IDS = {
   LEFT_PANEL: 'leftPanel',
   MID_PANEL: 'middlePanel',
@@ -216,6 +219,9 @@ export class AppComponent implements AfterViewInit {
         // in IE11, this event is called everytime a pdf is rotated or zoomed in
         // eslint-disable-next-line no-undef
         // setUpNudgeToolAndAppendToIFrame();
+        setInstance(instance);
+        initNudgeTool();
+        onStateChange(onNudgeToolStateChange);
       });
   
       return callback(null, instances);
