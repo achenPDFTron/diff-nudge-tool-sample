@@ -43,8 +43,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss",
-              "src/assets/lib/diff.css"
+              "src/assets/lib/diff.css",
+              "src/styles.scss"
             ],
             "scripts": [
               "src/assets/lib/webviewer.min.js",

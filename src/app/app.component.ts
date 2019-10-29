@@ -38,7 +38,7 @@ export class AppComponent implements AfterViewInit {
         // eslint-disable-next-line no-undef
         setInstance(instance);
         initNudgeTool();
-        setUpNudgeToolAndAppendToIFrame();
+        // setUpNudgeToolAndAppendToIFrame();
 
       });
     });
