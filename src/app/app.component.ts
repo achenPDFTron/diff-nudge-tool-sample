@@ -136,7 +136,14 @@ export class AppComponent implements AfterViewInit {
   
           // Update zoom value of the WebViewer instances
           docViewer.on('zoomUpdated', (zoom) => {
-            // syncZoom(zoom);
+            // sync up zoom levels for all WV instances
+            viewers.forEach(function(item) {
+              var instance = instances[item.panel].instance;
+          
+              if (instance.getZoomLevel() !== zoom) {
+                instance.setZoomLevel(zoom);
+              }
+            });
           });
   
           // Update rotation value of the WebViewer instances
