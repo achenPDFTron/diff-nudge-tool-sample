@@ -5,6 +5,8 @@ Angular sample for the diff nudge tool.
 Notes:
 - Please have a look at the Angular.json script and asset section.
 
+- Code in app.component.html was copied from index.html of the diff sample
+
 - I copied and pasted the HTML code for the nudge tool. Ensure that the element ID matches what is specified in the nudge-tool.js.
 
 - I did not bother with using "setUpNudgeToolAndAppendToIFrame()" as that will put the nudge tool in the iFrame. By doing this, this allows more customization on the developer's end.
