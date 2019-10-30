@@ -7,15 +7,11 @@ declare const CoreControls: any;
 declare const WebViewer: any;
 
 declare const initNudgeTool: any;
-declare const setUpNudgeToolAndAppendToIFrame: any;
 declare const setInstance: any;
 declare const getPageTransformationState: any;
 declare const resetPageTransformationStates: any;
 
 declare const onStateChange;
-// declare const onNudgeToolStateChange;
-
-declare const TRANSFORMATION_TYPE;
 
 const PANEL_IDS = {
   LEFT_PANEL: 'leftPanel',
@@ -101,7 +97,7 @@ export class AppComponent implements AfterViewInit {
 
   setupViewer(item) {
     return new Promise((resolve) => {
-      var viewerElement = document.getElementById(item.panel);
+      const viewerElement = document.getElementById(item.panel);
       /**
        * https://github.com/angular/angular-cli/wiki/stories-asset-configuration
        * /webviewer defined in ANgular json
@@ -115,11 +111,11 @@ export class AppComponent implements AfterViewInit {
         enableAnnotations: false,
       }, viewerElement)
         .then((instance) => {
-          var docViewer = instance.docViewer;
+          const docViewer = instance.docViewer;
   
           docViewer.on('documentLoaded', () => {
             if (!instances[item.panel].documentContainer) {
-              var documentContainer = viewerElement.querySelector('iframe').contentDocument.querySelector('.DocumentContainer');
+              const documentContainer = viewerElement.querySelector('iframe').contentDocument.querySelector('.DocumentContainer');
               instances[item.panel] = Object.assign({}, instances[item.panel], {
                 documentContainer: documentContainer,
               });
@@ -139,13 +135,20 @@ export class AppComponent implements AfterViewInit {
           });
   
           // Update zoom value of the WebViewer instances
-          docViewer.on('zoomUpdated', function(zoom) {
+          docViewer.on('zoomUpdated', (zoom) => {
             // syncZoom(zoom);
           });
   
           // Update rotation value of the WebViewer instances
-          docViewer.on('rotationUpdated', function(rotation) {
-            // syncRotation(rotation);
+          docViewer.on('rotationUpdated', (rotation) => {
+            // synchronize rotation for all WV instances
+            viewers.forEach((item) => {
+              var instance = instances[item.panel].instance;
+          
+              if (instance.docViewer.getRotation() !== rotation) {
+                instance.docViewer.setRotation(rotation);
+              }
+            });
           });
   
           viewers.push(item);
