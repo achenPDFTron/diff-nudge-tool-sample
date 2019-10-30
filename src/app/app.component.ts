@@ -38,6 +38,9 @@ const TRANSFORMATION_DELTA = 1;
  */
 let originalCanvases = [];
 
+let originalScroller = undefined;
+let scrollTimeout = undefined;
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -112,6 +115,8 @@ export class AppComponent implements AfterViewInit {
       }, viewerElement)
         .then((instance) => {
           const docViewer = instance.docViewer;
+
+          let onScroll;
   
           docViewer.on('documentLoaded', () => {
             if (!instances[item.panel].documentContainer) {
@@ -119,21 +124,48 @@ export class AppComponent implements AfterViewInit {
               instances[item.panel] = Object.assign({}, instances[item.panel], {
                 documentContainer: documentContainer,
               });
-  
+
               // Sync all WebViewer instances when scroll changes
-              // documentContainer.onscroll = function() {
-              //   if (!originalScroller || originalScroller === documentContainer) {
-              //     originalScroller = documentContainer;
-              //     syncScrolls(documentContainer.scrollLeft, documentContainer.scrollTop);
-              //     clearTimeout(scrollTimeout);
-              //     scrollTimeout = setTimeout(function() {
-              //       originalScroller = null;
-              //     }, 50);
-              //   }
-              // };
+              onScroll = () => {
+                if (!originalScroller || originalScroller === documentContainer) {
+                  originalScroller = documentContainer;
+                  const scrollLeft = documentContainer.scrollLeft;
+                  const scrollTop = documentContainer.scrollTop;
+                  viewers.forEach((item) => {
+                    const documentContainer = instances[item.panel].documentContainer;
+                
+                    if (!documentContainer) {
+                      return;
+                    }
+                
+                    if (documentContainer.scrollLeft !== scrollLeft) {
+                      documentContainer.scrollLeft = scrollLeft;
+                    }
+                
+                    if (documentContainer.scrollTop !== scrollTop) {
+                      documentContainer.scrollTop = scrollTop;
+                    }
+                  });
+                  clearTimeout(scrollTimeout);
+                  scrollTimeout = setTimeout(() => {
+                    originalScroller = null;
+                  }, 50);
+                }
+              };
+              documentContainer.addEventListener('scroll', onScroll);
             }
           });
-  
+
+          docViewer.on('documentUnloaded', () => {
+            viewers.forEach((item) => {
+              const documentContainer = instances[item.panel].documentContainer;
+              if (!documentContainer) {
+                return;
+              }
+              documentContainer.removeEventListener('scroll', onScroll);
+            });
+          });
+
           // Update zoom value of the WebViewer instances
           docViewer.on('zoomUpdated', (zoom) => {
             // sync up zoom levels for all WV instances
