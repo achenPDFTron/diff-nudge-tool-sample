@@ -60,25 +60,6 @@ export class AppComponent implements AfterViewInit {
   minScaleVal: number;
 
   ngAfterViewInit(): void {
-    /**
-     * https://github.com/angular/angular-cli/wiki/stories-asset-configuration
-     * /webviewer defined in ANgular json
-     */
-    // WebViewer({
-    //   path: '/webviewer',
-    //   initialDoc: 'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf'
-    // }, this.midPanelViewer.nativeElement).then(instance => {
-    //   this.wvInstance = instance;
-    //   instance.docViewer.one('finishedRendering', function() {
-    //     // run this only once
-    //     // in IE11, this event is called everytime a pdf is rotated or zoomed in
-    //     // eslint-disable-next-line no-undef
-    //     setInstance(instance);
-    //     initNudgeTool();
-    //     // setUpNudgeToolAndAppendToIFrame();
-
-    //   });
-    // });
     this.initializeViewers(VIEWER_IDS, () => {
       this.initialize('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf', 'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf');
     });
@@ -104,11 +85,7 @@ export class AppComponent implements AfterViewInit {
 
   loadDocument(panel, docLocation) {
     var CoreControls = instances[panel].instance.CoreControls;
-  
-    // CoreControls.createDocument(docLocation, { workerTransportPromise: this.getWorkerTransportPromise() })
-    //   .then(function(newDoc) {
-    //     instances[panel] = Object.assign({}, instances[panel], { newDoc: newDoc });
-    //   });
+
     CoreControls.createDocument(docLocation)
       .then((newDoc) => {
         instances[panel] = Object.assign({}, instances[panel], { newDoc: newDoc });
@@ -125,7 +102,10 @@ export class AppComponent implements AfterViewInit {
   setupViewer(item) {
     return new Promise((resolve) => {
       var viewerElement = document.getElementById(item.panel);
-  
+      /**
+       * https://github.com/angular/angular-cli/wiki/stories-asset-configuration
+       * /webviewer defined in ANgular json
+       */
       WebViewer({
         path: '/webviewer',
         // share a single instame of the worker transport
@@ -273,6 +253,30 @@ export class AppComponent implements AfterViewInit {
     });
   }
 
+  computeNewCoordsFromZoomRotation(currZoom, currRotation, dX, dY) {
+    var result = [dX, dY];
+    // https://www.pdftron.com/api/web/PDFNet.Page.html#.rotationToDegree__anchor
+    switch (currRotation) {
+      // 0 deg
+      case 0:
+        result = [dX * currZoom, dY * currZoom];
+        break;
+      // 90 deg
+      case 1:
+        result = [dY * currZoom * -1, dX * currZoom];
+        break;
+      // 180 deg
+      case 2:
+        result = [dX * currZoom, dY * currZoom * -1];
+        break;
+      // 270 deg
+      case 3:
+        result = [dY * currZoom, dX * currZoom];
+        break;
+    }
+    return result;
+  }
+
   updateMiddlePanelDiff(pageIndexToApplyDiff) {
     if (!originalCanvases[pageIndexToApplyDiff]) {
       return;
@@ -284,10 +288,10 @@ export class AppComponent implements AfterViewInit {
     // eslint-disable-next-line no-undef
     var transformationToApply = getPageTransformationState(pageIndexToApplyDiff);
   
-    // var coords = computeNewCoordsFromZoomRotation(instance.docViewer.getZoom(),
-    //   instance.docViewer.getRotation(),
-    //   transformationToApply.horizontalTranslation * TRANSFORMATION_DELTA,
-    //   transformationToApply.verticalTranslation * TRANSFORMATION_DELTA);
+    var coords = this.computeNewCoordsFromZoomRotation(instance.docViewer.getZoom(),
+      instance.docViewer.getRotation(),
+      transformationToApply.horizontalTranslation * TRANSFORMATION_DELTA,
+      transformationToApply.verticalTranslation * TRANSFORMATION_DELTA);
   
     var newCanvas = document.createElement('canvas');
     var newCanvasCtx = newCanvas.getContext('2d');
@@ -303,9 +307,8 @@ export class AppComponent implements AfterViewInit {
   
     newCanvasCtx.save();
   
-    newCanvasCtx.translate(transformationToApply.horizontalTranslation, transformationToApply.verticalTranslation);
-  
-    // TODO translate so that we can rotate using the center as the focal point
+    // translate so that we can rotate using the center as the focal point
+    newCanvasCtx.translate(canvas.width / 2, canvas.height / 2);
   
     var newScale = ((TRANSFORMATION_DELTA * transformationToApply.scaling) + 100) / 100;
     if (newScale >= 0) {
@@ -315,8 +318,10 @@ export class AppComponent implements AfterViewInit {
       newCanvasCtx.scale(this.minScaleVal, this.minScaleVal);
     }
     // rotate params must be in radians
-    newCanvasCtx.rotate((transformationToApply.rotation) * Math.PI / 180 * 1);
-  
+    newCanvasCtx.rotate((transformationToApply.rotation) * Math.PI / 180);
+    // undo translation so that future transformations are correct
+    newCanvasCtx.translate(-canvas.width / 2, -canvas.height / 2);
+    newCanvasCtx.translate(coords[0], coords[1]);
     newCanvasCtx.drawImage(canvas, 0, 0);
   
     newCanvasCtx.restore();
