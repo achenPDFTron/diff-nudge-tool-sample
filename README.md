@@ -5,9 +5,11 @@ Angular sample for the diff nudge tool.
 Notes:
 - Please have a look at the Angular.json script and asset section.
 
+- I copied and pasted the HTML code for the nudge tool. Ensure that the element ID matches what is specified in the nudge-tool.js.
+
 - I did not bother with using "setUpNudgeToolAndAppendToIFrame()" as that will put the nudge tool in the iFrame. By doing this, this allows more customization on the developer's end.
 
-- Majority of the code in app.component.ts has been copied and pasted from the diff.js file (I mainly changed the callback to use arrow functions). I didn't really bother to add parameter/ variable typing and changing "var" to be "let/const".
+- Majority of the code in app.component.ts has been copied and pasted from the diff.js file (I mainly changed the callback to use arrow functions so that "this" works properly). I didn't really bother to add parameter/ variable typing and changing "var" to be "let/const".
 
 - I did not bother to include diff.js in the scripts in Angular.json as it throws some errors when its executed.
 
