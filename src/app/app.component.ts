@@ -50,8 +50,6 @@ export class AppComponent implements AfterViewInit {
 
   wvInstance: any;
 
-  workerTransportPromise: any;
-
   minScaleVal: number;
 
   ngAfterViewInit(): void {
@@ -96,7 +94,6 @@ export class AppComponent implements AfterViewInit {
        */
       WebViewer({
         path: '/webviewer',
-        // share a single instame of the worker transport
         initialDoc: item.pdf || null,
         // disable annotation rendering
         enableAnnotations: false,
