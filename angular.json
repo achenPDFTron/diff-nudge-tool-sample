@@ -48,7 +48,6 @@
             ],
             "scripts": [
               "src/assets/lib/webviewer.min.js",
-              "src/assets/lib/core/CoreControls.js",
               "src/assets/lib/nudge-tool.js",
               "src/assets/lib/diff.js"
             ]

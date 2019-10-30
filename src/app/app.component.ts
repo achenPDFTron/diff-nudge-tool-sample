@@ -13,7 +13,9 @@ declare const getPageTransformationState: any;
 declare const resetPageTransformationStates: any;
 
 declare const onStateChange;
-declare const onNudgeToolStateChange;
+// declare const onNudgeToolStateChange;
+
+declare const TRANSFORMATION_TYPE;
 
 const PANEL_IDS = {
   LEFT_PANEL: 'leftPanel',
@@ -221,11 +223,19 @@ export class AppComponent implements AfterViewInit {
         // setUpNudgeToolAndAppendToIFrame();
         setInstance(instance);
         initNudgeTool();
-        onStateChange(onNudgeToolStateChange);
+        onStateChange(() => {
+          this.onNudgeToolStateChange();
+        });
       });
   
       return callback(null, instances);
     });
+  }
+
+  onNudgeToolStateChange() {
+    var instance = instances[PANEL_IDS.MID_PANEL].instance;
+    var currPageIndex = instance.docViewer.getCurrentPage() - 1;
+    this.updateMiddlePanelDiff(currPageIndex);
   }
 
   update(panel, pageIndex) {

@@ -11,8 +11,9 @@
 // @link Document: https://www.pdftron.com/api/web/CoreControls.Document.html
 // @link Document.loadAsync: https://www.pdftron.com/api/web/CoreControls.Document.html#loadAsync__anchor
 // @link Document.cancelLoadCanvas: https://www.pdftron.com/api/web/CoreControls.Document.html#cancelLoadCanvas__anchor
-
-CoreControls.setWorkerPath('../../../lib/core');
+// if (CoreControls) {
+//   CoreControls.setWorkerPath('../../../lib/core');
+// }
 
 /**
  * If in IE11, it will have value of true
