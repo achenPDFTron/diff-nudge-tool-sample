@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angula
 
 declare const CoreControls: any;
 
-// CoreControls.setWorkerPath('../../../lib/core');
+CoreControls.setWorkerPath('/webviewer/core');
 
 declare const WebViewer: any;
 
@@ -108,7 +108,7 @@ export class AppComponent implements AfterViewInit {
       WebViewer({
         path: '/webviewer',
         // share a single instame of the worker transport
-        // workerTransportPromise: this.getWorkerTransportPromise(),
+        workerTransportPromise: this.getWorkerTransportPromise(),
         initialDoc: item.pdf || null,
         // disable annotation rendering
         enableAnnotations: false,
@@ -205,7 +205,7 @@ export class AppComponent implements AfterViewInit {
   initializeViewers(array, callback) {
     var pageCompleteRenderRect = {};
   
-    Promise.all(array.map(this.setupViewer)).then(() => {
+    Promise.all(array.map(this.setupViewer.bind(this))).then(() => {
       var instance = instances[PANEL_IDS.MID_PANEL].instance;
   
       // eslint-disable-next-line no-undef
