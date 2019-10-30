@@ -1,8 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-
-declare const CoreControls: any;
-
-CoreControls.setWorkerPath('/webviewer/core');
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 
 declare const WebViewer: any;
 
@@ -15,13 +11,13 @@ declare const onStateChange;
 
 const PANEL_IDS = {
   LEFT_PANEL: 'leftPanel',
-  MID_PANEL: 'middlePanel',
+  MIDDLE_PANEL: 'middlePanel',
   RIGHT_PANEL: 'rightPanel',
 };
 
 const VIEWER_IDS = [
   { panel: PANEL_IDS.LEFT_PANEL },
-  { panel: PANEL_IDS.MID_PANEL },
+  { panel: PANEL_IDS.MIDDLE_PANEL },
   { panel: PANEL_IDS.RIGHT_PANEL },
 ];
 
@@ -65,7 +61,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   initialize(firstPdfRelPath, secondPdfRelPath) {
-    this.openDoc(PANEL_IDS.MID_PANEL, firstPdfRelPath, secondPdfRelPath);
+    this.openDoc(PANEL_IDS.MIDDLE_PANEL, firstPdfRelPath, secondPdfRelPath);
     this.openDoc(PANEL_IDS.LEFT_PANEL, firstPdfRelPath, undefined);
     this.openDoc(PANEL_IDS.RIGHT_PANEL, secondPdfRelPath, undefined);
   
@@ -77,7 +73,7 @@ export class AppComponent implements AfterViewInit {
     var instance = instances[panel].instance;
     instance.loadDocument(firstPdf);
   
-    if (panel === PANEL_IDS.MID_PANEL && secondPdf) {
+    if (panel === PANEL_IDS.MIDDLE_PANEL && secondPdf) {
       this.loadDocument(panel, secondPdf);
     }
   }
@@ -91,13 +87,6 @@ export class AppComponent implements AfterViewInit {
       });
   }
 
-  getWorkerTransportPromise() {
-    return this.workerTransportPromise || CoreControls.getDefaultBackendType().then((backendType) => {
-      this.workerTransportPromise = CoreControls.initPDFWorkerTransports(backendType, {});
-      return this.workerTransportPromise;
-    });
-  }
-
   setupViewer(item) {
     return new Promise((resolve) => {
       const viewerElement = document.getElementById(item.panel);
@@ -108,7 +97,6 @@ export class AppComponent implements AfterViewInit {
       WebViewer({
         path: '/webviewer',
         // share a single instame of the worker transport
-        workerTransportPromise: this.getWorkerTransportPromise(),
         initialDoc: item.pdf || null,
         // disable annotation rendering
         enableAnnotations: false,
@@ -206,7 +194,7 @@ export class AppComponent implements AfterViewInit {
     var pageCompleteRenderRect = {};
   
     Promise.all(array.map(this.setupViewer.bind(this))).then(() => {
-      var instance = instances[PANEL_IDS.MID_PANEL].instance;
+      var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
   
       // eslint-disable-next-line no-undef
       setInstance(instance);
@@ -216,14 +204,14 @@ export class AppComponent implements AfterViewInit {
   
       instance.docViewer.on('pageComplete', (completedPageIndex) => {
         pageCompleteRenderRect[completedPageIndex] = lastRenderRect[completedPageIndex];
-        this.update(PANEL_IDS.MID_PANEL, completedPageIndex);
+        this.update(PANEL_IDS.MIDDLE_PANEL, completedPageIndex);
       });
   
       instance.docViewer.on('beginRendering', () => {
         var pageIndex = instance.docViewer.getCurrentPage() - 1;
         lastRenderRect[pageIndex] = instance.docViewer.getViewportRegionRect(pageIndex);
         if (currentLoadCanvas[pageIndex]) {
-          var newDoc = instances[PANEL_IDS.MID_PANEL].newDoc;
+          var newDoc = instances[PANEL_IDS.MIDDLE_PANEL].newDoc;
           newDoc.cancelLoadCanvas(currentLoadCanvas[pageIndex]);
         }
       });
@@ -234,7 +222,7 @@ export class AppComponent implements AfterViewInit {
   
         visiblePages.forEach((pageIndex) => {
           lastRenderRect[pageIndex] = pageCompleteRenderRect[pageIndex];
-          this.update(PANEL_IDS.MID_PANEL, pageIndex);
+          this.update(PANEL_IDS.MIDDLE_PANEL, pageIndex);
         });
       });
   
@@ -242,7 +230,6 @@ export class AppComponent implements AfterViewInit {
         // run this only once
         // in IE11, this event is called everytime a pdf is rotated or zoomed in
         // eslint-disable-next-line no-undef
-        // setUpNudgeToolAndAppendToIFrame();
         setInstance(instance);
         initNudgeTool();
         onStateChange(() => {
@@ -255,7 +242,7 @@ export class AppComponent implements AfterViewInit {
   }
 
   onNudgeToolStateChange() {
-    var instance = instances[PANEL_IDS.MID_PANEL].instance;
+    var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
     var currPageIndex = instance.docViewer.getCurrentPage() - 1;
     this.updateMiddlePanelDiff(currPageIndex);
   }
@@ -323,8 +310,8 @@ export class AppComponent implements AfterViewInit {
     if (!originalCanvases[pageIndexToApplyDiff]) {
       return;
     }
-    var instance = instances[PANEL_IDS.MID_PANEL].instance;
-    var documentContainer = instances[PANEL_IDS.MID_PANEL].documentContainer;
+    var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
+    var documentContainer = instances[PANEL_IDS.MIDDLE_PANEL].documentContainer;
   
     var canvas = originalCanvases[pageIndexToApplyDiff];
     // eslint-disable-next-line no-undef

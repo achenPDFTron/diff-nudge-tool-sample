@@ -34,13 +34,13 @@ var minScaleVal;
 
 var PANEL_IDS = {
   LEFT_PANEL: 'leftPanel',
-  MID_PANEL: 'middlePanel',
+  MIDDLE_PANEL: 'middlePanel',
   RIGHT_PANEL: 'rightPanel',
 };
 
 var VIEWER_IDS = [
   { panel: PANEL_IDS.LEFT_PANEL },
-  { panel: PANEL_IDS.MID_PANEL },
+  { panel: PANEL_IDS.MIDDLE_PANEL },
   { panel: PANEL_IDS.RIGHT_PANEL },
 ];
 
@@ -175,8 +175,8 @@ function updateMiddlePanelDiff(pageIndexToApplyDiff) {
   if (!originalCanvases[pageIndexToApplyDiff]) {
     return;
   }
-  var instance = instances[PANEL_IDS.MID_PANEL].instance;
-  var documentContainer = instances[PANEL_IDS.MID_PANEL].documentContainer;
+  var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
+  var documentContainer = instances[PANEL_IDS.MIDDLE_PANEL].documentContainer;
 
   var canvas = originalCanvases[pageIndexToApplyDiff];
   // eslint-disable-next-line no-undef
@@ -293,7 +293,7 @@ function openDoc(panel, firstPdf, secondPdf) {
   var instance = instances[panel].instance;
   instance.loadDocument(firstPdf);
 
-  if (panel === PANEL_IDS.MID_PANEL && secondPdf) {
+  if (panel === PANEL_IDS.MIDDLE_PANEL && secondPdf) {
     loadDocument(panel, secondPdf);
   }
 }
@@ -340,7 +340,7 @@ function syncRotation(rotation) {
 }
 
 function align(line1StartPoint, line1EndPoint, line2StartPoint, line2EndPoint) {
-  var instance = instances[PANEL_IDS.MID_PANEL].instance;
+  var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
   var currPageIndex = instance.docViewer.getCurrentPage() - 1;
 
   var canvas = originalCanvases[currPageIndex];
@@ -438,7 +438,7 @@ function align(line1StartPoint, line1EndPoint, line2StartPoint, line2EndPoint) {
   newCanvasCtx.stroke();
   newCanvasCtx.restore();
   
-  var documentContainer = instances[PANEL_IDS.MID_PANEL].documentContainer;
+  var documentContainer = instances[PANEL_IDS.MIDDLE_PANEL].documentContainer;
   // eslint-disable-next-line prefer-template
   var firstDocCanvas = documentContainer.querySelector('.canvas' + currPageIndex);
   if (!firstDocCanvas) {
@@ -527,7 +527,7 @@ function initializeViewers(array, callback) {
   var pageCompleteRenderRect = {};
 
   Promise.all(array.map(setupViewer)).then(function() {
-    var instance = instances[PANEL_IDS.MID_PANEL].instance;
+    var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
 
     // eslint-disable-next-line no-undef
     setInstance(instance);
@@ -537,14 +537,14 @@ function initializeViewers(array, callback) {
 
     instance.docViewer.on('pageComplete', function(completedPageIndex) {
       pageCompleteRenderRect[completedPageIndex] = lastRenderRect[completedPageIndex];
-      update(PANEL_IDS.MID_PANEL, completedPageIndex);
+      update(PANEL_IDS.MIDDLE_PANEL, completedPageIndex);
     });
 
     instance.docViewer.on('beginRendering', function() {
       var pageIndex = instance.docViewer.getCurrentPage() - 1;
       lastRenderRect[pageIndex] = instance.docViewer.getViewportRegionRect(pageIndex);
       if (currentLoadCanvas[pageIndex]) {
-        var newDoc = instances[PANEL_IDS.MID_PANEL].newDoc;
+        var newDoc = instances[PANEL_IDS.MIDDLE_PANEL].newDoc;
         newDoc.cancelLoadCanvas(currentLoadCanvas[pageIndex]);
       }
     });
@@ -555,7 +555,7 @@ function initializeViewers(array, callback) {
 
       visiblePages.forEach(function(pageIndex) {
         lastRenderRect[pageIndex] = pageCompleteRenderRect[pageIndex];
-        update(PANEL_IDS.MID_PANEL, pageIndex);
+        update(PANEL_IDS.MIDDLE_PANEL, pageIndex);
         // eslint-disable-next-line no-undef
         setNudgeDiffToolVisibility(true);
       });
@@ -573,13 +573,13 @@ function initializeViewers(array, callback) {
 }
 
 function onNudgeToolStateChange() {
-  var instance = instances[PANEL_IDS.MID_PANEL].instance;
+  var instance = instances[PANEL_IDS.MIDDLE_PANEL].instance;
   var currPageIndex = instance.docViewer.getCurrentPage() - 1;
   updateMiddlePanelDiff(currPageIndex);
 }
 
 function initialize(firstPdfRelPath, secondPdfRelPath, nudgeToolVisibilityBeforeDocRendered) {
-  openDoc(PANEL_IDS.MID_PANEL, firstPdfRelPath, secondPdfRelPath);
+  openDoc(PANEL_IDS.MIDDLE_PANEL, firstPdfRelPath, secondPdfRelPath);
   openDoc(PANEL_IDS.LEFT_PANEL, firstPdfRelPath);
   openDoc(PANEL_IDS.RIGHT_PANEL, secondPdfRelPath);
 

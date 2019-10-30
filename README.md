@@ -1,27 +1,17 @@
 # DiffNudgeToolSample
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.1.
+Angular sample for the diff nudge tool.
 
-## Development server
+Notes:
+- Please have a look at the Angular.json script and asset section.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- I did not bother with using "setUpNudgeToolAndAppendToIFrame()" as that will put the nudge tool in the iFrame. By doing this, this allows more customization on the developer's end.
 
-## Code scaffolding
+- Majority of the code in app.component.ts has been copied and pasted from the diff.js file (I mainly changed the callback to use arrow functions). I didn't really bother to add parameter/ variable typing and changing "var" to be "let/const".
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- I did not bother to include diff.js in the scripts in Angular.json as it throws some errors when its executed.
 
-## Build
+- Did not bother to use "Workers" as it looks like the CoreControls.js file throw errors when executed. From speaking with one of our experienced developers, not using Workers will not impact the applications in any major ways. It's just a "nice to have".
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- There will be warnings: "There may be some degradation of performance. Your server has not been configured to serve .gz. and .br. files with the expected Content-Encoding."
+Off the top of my head, that can be resolved by setting the content encoding for server side rendering: https://angular.io/guide/universal#using-absolute-urls-for-server-requests

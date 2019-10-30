@@ -42,16 +42,6 @@ function setNudgeDiffToolVisibility(visible) {
   }
 }
 
-function getDefaultTransformationState() {
-  var DEFAULT_TRANSFORMATION_STATE = {
-    verticalTranslation: 0,
-    horizontalTranslation: 0,
-    rotation: 0,
-    scaling: 0,
-  };
-  return DEFAULT_TRANSFORMATION_STATE;
-}
-
 function renderSVGIcons() {
   var url = window.location.href;
   var elementIdToSVGMapping = {
@@ -69,8 +59,7 @@ function renderSVGIcons() {
     var img = document.createElement('img');
     img.draggable = false;
     // eslint-disable-next-line prefer-template
-    var urlToAppend = url[url.length - 1] === '/' ?'assets/' + elementIdToSVGMapping[elementId] : '/assets/' + elementIdToSVGMapping[elementId];
-    img.setAttribute('src', url + urlToAppend);
+    img.setAttribute('src', url + '/assets/' + elementIdToSVGMapping[elementId]);
     if (temp) {
       temp.appendChild(img);
     }
@@ -134,13 +123,12 @@ function setInstance(param) {
 }
 
 function updateLocalTransformationState(transformationOperation) {
-  var TRANSFORMATION_TYPE = getTransformationType();
   // getCurrentPage() starts at index 1
   var currPageIndex = instance.docViewer.getCurrentPage() - 1;
   // if page does not exist
   if (!pageTransformationStates[currPageIndex]) {
     pageTransformationStates[currPageIndex] = {};
-    Object.assign(pageTransformationStates[currPageIndex], getDefaultTransformationState());
+    Object.assign(pageTransformationStates[currPageIndex], DEFAULT_TRANSFORMATION_STATE);
   }
 
   var transformationState = pageTransformationStates[currPageIndex];
@@ -196,23 +184,7 @@ function onMouseDown(operationType, e) {
   }
 }
 
-function getTransformationType() {
-  var TRANSFORMATION_TYPE = {
-    // some arbitrary unique values
-    HORIZONTAL_TRANSLATION_INC: 'HORIZONTAL_TRANSLATION_INC',
-    HORIZONTAL_TRANSLATION_DEC: 'HORIZONTAL_TRANSLATION_DEC',
-    VERTICAL_TRANSLATION_INC: 'VERTICAL_TRANSLATION_INC',
-    VERTICAL_TRANSLATION_DEC: 'VERTICAL_TRANSLATION_DEC',
-    ROTATION_INC: 'ROTATION_INC',
-    ROTATION_DEC: 'ROTATION_DEC',
-    SCALE_IN: 'SCALE_IN',
-    SCALE_OUT: 'SCALE_OUT',
-  };
-  return TRANSFORMATION_TYPE;
-}
-
 function initNudgeTool() {
-  var TRANSFORMATION_TYPE = getTransformationType();
   var elementIdToOperationMapping = {
     'rotateCounterClockwise': TRANSFORMATION_TYPE.ROTATION_DEC,
     'rotateClockwise': TRANSFORMATION_TYPE.ROTATION_INC,
@@ -236,7 +208,7 @@ function resetPageTransformationStates() {
 function setPageTransformationState(index, horizontalTranslation, verticalTranslation, scale, rotation) {
   var temp = {};
   if (!pageTransformationStates[index]) {
-    temp = Object.assign(temp, getDefaultTransformationState());
+    temp = Object.assign(temp, DEFAULT_TRANSFORMATION_STATE);
     pageTransformationStates[index] = temp;
   }
   temp = {
@@ -251,6 +223,6 @@ function setPageTransformationState(index, horizontalTranslation, verticalTransl
 
 function getPageTransformationState(index) {
   var temp = {};
-  temp = Object.assign(temp, getDefaultTransformationState());
+  temp = Object.assign(temp, DEFAULT_TRANSFORMATION_STATE);
   return pageTransformationStates[index] ? pageTransformationStates[index] : temp;
 }
