@@ -35,6 +35,11 @@
                 "glob": "**/*.svg",
                 "input": "src/assets/lib/icons",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*.pdf",
+                "input": "src/assets",
+                "output": "/pdf/"
               }
             ],
             "styles": [

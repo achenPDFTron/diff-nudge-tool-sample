@@ -54,7 +54,8 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initializeViewers(VIEWER_IDS, () => {
-      this.initialize('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf', 'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf');
+      // this.initialize('https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf', 'https://pdftron.s3.amazonaws.com/downloads/pl/webviewer-demo.pdf');
+      this.initialize('/pdf/cheetahs.pdf', '/pdf/cheetahs.pdf');
     });
   }
 
